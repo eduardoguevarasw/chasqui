@@ -77,7 +77,7 @@ const guia = async (id) => {
 const imprimirHolaMundo = async (nombreImpresora, data) => {
   const conector = new ConectorPluginV3(URLPlugin);
   const respuesta = await conector
-  .iniciar()
+  .Iniciar()
   .DeshabilitarElModoDeCaracteresChinos()
   .EstablecerAlineacion(ConectorPluginV3.ALINEACION_CENTRO)
   .DescargarImagenDeInternetEImprimir("https://scontent.fuio15-1.fna.fbcdn.net/v/t39.30808-6/302281394_574195324492999_2031910601208551277_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=YJc4b_tW61QAX-rW_cM&_nc_pt=1&_nc_ht=scontent.fuio15-1.fna&oh=00_AfDDoJCTaczFBUpxE4SXxQXAKjwrM5vasqAfA7hIAG-i9w&oe=653607BD", 0, 216)
