@@ -7,7 +7,7 @@ const obtenerListaDeImpresoras = async () => {
   return await ConectorPluginV3.obtenerImpresoras();
 };
 
-const loadprint = async () => {
+const listarImpresoras = async () => {
   const URLPlugin = "http://localhost:8000";
   const $listaDeImpresoras = document.getElementById("impresora");
   const impresoras = await ConectorPluginV3.obtenerImpresoras(URLPlugin);
