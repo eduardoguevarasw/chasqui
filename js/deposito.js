@@ -3,6 +3,28 @@ const supabaseKey =
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdzdnVkd3Z4cmV2dmN0cWt0c2h3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTc1MjEyMzEsImV4cCI6MjAxMzA5NzIzMX0.HILdAe9d2T0wrFCtpRXD-5rSuPS1WCzQB6H3JrDNFGs";
 const database = supabase.createClient(supabaseUrl, supabaseKey);
 
+const obtenerListaDeImpresoras = async () => {
+  return await ConectorPluginV3.obtenerImpresoras();
+};
+const URLPlugin = "http://localhost:8000";
+const $listaDeImpresoras = document.getElementById("impresora");
+const impresoras = await ConectorPluginV3.obtenerImpresoras(URLPlugin);
+for (const impresora of impresoras) {
+  $listaDeImpresoras.appendChild(
+    Object.assign(document.createElement("option"), {
+      value: impresora,
+      text: impresora,
+    })
+  );
+}
+const nombreImpresora = $listaDeImpresoras.value;
+if (!nombreImpresora) {
+  return alert("Por favor seleccione una impresora.");
+}
+
+
+
+
 //funcion para obtener los datos
 function depositar() {
   event.preventDefault();
@@ -13,6 +35,16 @@ function depositar() {
   let contacto = document.getElementById("contacto").value;
   let valor = document.getElementById("valor").value;
   let estado = "Pendiente";
+
+  let data = {
+    tipo: tipo,
+    cta: cta,
+    ci: ci,
+    nombres: nombres,
+    contacto: contacto,
+    valor: valor,
+    estado: estado,
+  };
 
   if (
     tipo == "" ||
@@ -55,25 +87,30 @@ function depositar() {
       if (result.isConfirmed) {
         let numero_ticket = Math.floor(Math.random() * 1000000000);
         //guardar en la base de datos
-          database.from("depositos").insert([{
-            numero_ticket: numero_ticket,
-            tipo: tipo,
-            cta: cta,
-            ci: ci,
-            nombres: nombres,
-            contacto: contacto,
-            valor: valor,
-            estado: estado,
-          }]).then((result) => {
+        database
+          .from("depositos")
+          .insert([
+            {
+              numero_ticket: numero_ticket,
+              tipo: tipo,
+              cta: cta,
+              ci: ci,
+              nombres: nombres,
+              contacto: contacto,
+              valor: valor,
+              estado: estado,
+            },
+          ])
+          .then((result) => {
+            //imprimir el ticket
+            imprimirHolaMundo(nombreImpresora, data);
             Swal.fire({
               icon: "success",
               title: "Depositado!",
               text: "El deposito se realizo con exito!",
             });
-            //abrir una pagina aparte 
-            //para imprimir el comprobante
-            window.open(`../transacciones/comprobante.html?ticket=${numero_ticket}`);
-          }).catch((error) => {
+          })
+          .catch((error) => {
             Swal.fire({
               icon: "error",
               title: "Oops...",
@@ -84,3 +121,28 @@ function depositar() {
     });
   }
 }
+
+
+const imprimirHolaMundo = async (nombreImpresora, data) => {
+  const conector = new ConectorPluginV3(URLPlugin);
+  const respuesta = await conector
+  .Iniciar()
+  .DeshabilitarElModoDeCaracteresChinos()
+  .EstablecerAlineacion(ConectorPluginV3.ALINEACION_CENTRO)
+  .EscribirTexto("COMPROBANT TRANSACCION\n")
+  .Feed(1)
+  .EscribirTexto("TIPO DE CUENTA: " + data.tipo + "\n")
+  .EscribirTexto("CUENTA: " + data.cta + "\n")
+  .EscribirTexto("CEDULA: " + data.ci + "\n")
+  .EscribirTexto("NOMBRES: " + data.nombres + "\n")
+  .EscribirTexto("CONTACTO: " + data.contacto + "\n")
+  .EscribirTexto("VALOR: " + data.valor + "\n")
+  .Feed(1)
+  .EscribirTexto("El tiempo estimado para el deposito es de 20 min \n")
+  .imprimirEn(nombreImpresora);
+  if (respuesta === true) {
+    alert("Impreso correctamente");
+  } else {
+    alert("Error: " + respuesta);
+  }
+};
