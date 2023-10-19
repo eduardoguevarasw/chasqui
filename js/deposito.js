@@ -6,24 +6,24 @@ const database = supabase.createClient(supabaseUrl, supabaseKey);
 const obtenerListaDeImpresoras = async () => {
   return await ConectorPluginV3.obtenerImpresoras();
 };
-const URLPlugin = "http://localhost:8000";
-const $listaDeImpresoras = document.getElementById("impresora");
-const impresoras = await ConectorPluginV3.obtenerImpresoras(URLPlugin);
-for (const impresora of impresoras) {
-  $listaDeImpresoras.appendChild(
-    Object.assign(document.createElement("option"), {
-      value: impresora,
-      text: impresora,
-    })
-  );
-}
-const nombreImpresora = $listaDeImpresoras.value;
-if (!nombreImpresora) {
-  return alert("Por favor seleccione una impresora.");
-}
 
-
-
+const loadprint = async () => {
+  const URLPlugin = "http://localhost:8000";
+  const $listaDeImpresoras = document.getElementById("impresora");
+  const impresoras = await ConectorPluginV3.obtenerImpresoras(URLPlugin);
+  for (const impresora of impresoras) {
+    $listaDeImpresoras.appendChild(
+      Object.assign(document.createElement("option"), {
+        value: impresora,
+        text: impresora,
+      })
+    );
+  }
+  const nombreImpresora = $listaDeImpresoras.value;
+  if (!nombreImpresora) {
+    return alert("Por favor seleccione una impresora.");
+  }
+};
 
 //funcion para obtener los datos
 function depositar() {
@@ -122,24 +122,23 @@ function depositar() {
   }
 }
 
-
 const imprimirHolaMundo = async (nombreImpresora, data) => {
   const conector = new ConectorPluginV3(URLPlugin);
   const respuesta = await conector
-  .Iniciar()
-  .DeshabilitarElModoDeCaracteresChinos()
-  .EstablecerAlineacion(ConectorPluginV3.ALINEACION_CENTRO)
-  .EscribirTexto("COMPROBANT TRANSACCION\n")
-  .Feed(1)
-  .EscribirTexto("TIPO DE CUENTA: " + data.tipo + "\n")
-  .EscribirTexto("CUENTA: " + data.cta + "\n")
-  .EscribirTexto("CEDULA: " + data.ci + "\n")
-  .EscribirTexto("NOMBRES: " + data.nombres + "\n")
-  .EscribirTexto("CONTACTO: " + data.contacto + "\n")
-  .EscribirTexto("VALOR: " + data.valor + "\n")
-  .Feed(1)
-  .EscribirTexto("El tiempo estimado para el deposito es de 20 min \n")
-  .imprimirEn(nombreImpresora);
+    .Iniciar()
+    .DeshabilitarElModoDeCaracteresChinos()
+    .EstablecerAlineacion(ConectorPluginV3.ALINEACION_CENTRO)
+    .EscribirTexto("COMPROBANT TRANSACCION\n")
+    .Feed(1)
+    .EscribirTexto("TIPO DE CUENTA: " + data.tipo + "\n")
+    .EscribirTexto("CUENTA: " + data.cta + "\n")
+    .EscribirTexto("CEDULA: " + data.ci + "\n")
+    .EscribirTexto("NOMBRES: " + data.nombres + "\n")
+    .EscribirTexto("CONTACTO: " + data.contacto + "\n")
+    .EscribirTexto("VALOR: " + data.valor + "\n")
+    .Feed(1)
+    .EscribirTexto("El tiempo estimado para el deposito es de 20 min \n")
+    .imprimirEn(nombreImpresora);
   if (respuesta === true) {
     alert("Impreso correctamente");
   } else {
