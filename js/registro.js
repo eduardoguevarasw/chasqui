@@ -76,16 +76,32 @@ const guia = async (id) => {
 
 const imprimirHolaMundo = async (nombreImpresora, data) => {
   const conector = new ConectorPluginV3(URLPlugin);
-  conector.Iniciar();
-  conector.EscribirTexto("CHASQUI EXPRESS TIPUTINI");
-  conector.EscribirTexto("Guia de encomienda");
-  //usar la data que llega para imprimir
-  conector.EscribirTexto(`Fecha: ${data.fecha}`);
-  conector.EscribirTexto(`Enviado por: ${data.envia}`);
-  conector.EscribirTexto(`Destino: ${data.destino}`);
-  conector.EscribirTexto(`Recibe: ${data.recibe}`);
-  conector.Feed(1);
-  const respuesta = await conector.imprimirEn(nombreImpresora);
+  const respuesta = await conector
+  .iniciar()
+  .DeshabilitarElModoDeCaracteresChinos()
+  .EstablecerAlineacion(ConectorPluginV3.ALINEACION_CENTRO)
+  .DescargarImagenDeInternetEImprimir("https://scontent.fuio15-1.fna.fbcdn.net/v/t39.30808-6/302281394_574195324492999_2031910601208551277_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=5f2048&_nc_ohc=YJc4b_tW61QAX-rW_cM&_nc_pt=1&_nc_ht=scontent.fuio15-1.fna&oh=00_AfDDoJCTaczFBUpxE4SXxQXAKjwrM5vasqAfA7hIAG-i9w&oe=653607BD", 0, 216)
+  .Feed(1)
+  .EscribirTexto("COMPROBANTE\n")
+  .Feed(1)
+  .EscribirTexto("Fecha: " + data.fecha + "\n")
+  .EscribirTexto("Envia: " + data.envia + "\n")
+  .EscribirTexto("Destino: " + data.destino + "\n")
+  .EscribirTexto("Recibe: " + data.recibe + "\n")
+  .EstablecerAlineacion(ConectorPluginV3.ALINEACION_IZQUIERDA)
+  .EscribirTexto("_____________________________\n")
+  .EscribirTexto("Detalle: " + data.detalle + "\n")
+  .EstablecerAlineacion(ConectorPluginV3.ALINEACION_CENTRO)
+  .EscribirTexto("____________________\n")
+  .EscribirTexto("Valor: " + data.valor + "\n")
+  .EscribirTexto("____________________\n")
+  .Feed(1)
+  .EscribirTexto("____________________\n")
+  .EscribirTexto("REMITENTE\n")
+  .Feed(1)
+  .EscribirTexto("____________________\n")
+  .EscribirTexto("DESTINATARIO\n")
+  .imprimirEn(nombreImpresora);
   if (respuesta === true) {
     alert("Impreso correctamente");
   } else {
