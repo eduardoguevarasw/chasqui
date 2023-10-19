@@ -9,7 +9,7 @@ let currentPage = 1;
 const obtenerListaDeImpresoras = async () => {
   return await ConectorPluginV3.obtenerImpresoras();
 };
-const URLPlugin = "http://localhost:8000"
+const URLPlugin = "http://localhost:8000";
 const $listaDeImpresoras = document.getElementById("impresora");
 
 function displayData(data, page) {
@@ -48,33 +48,50 @@ function displayData(data, page) {
 }
 
 const guia = async (id) => {
+  //obtener datos de la encomienda con el id
+  database
+    .from("encomiendas")
+    .select("*")
+    .eq("id", id)
+    .then((result) => {
+      console.log(result.data[0]);
+      //imprimir guia
+      imprimirHolaMundo(nombreImpresora, result.data[0]);
+    });
+
   const impresoras = await ConectorPluginV3.obtenerImpresoras(URLPlugin);
   for (const impresora of impresoras) {
-    $listaDeImpresoras.appendChild(Object.assign(document.createElement("option"), {
+    $listaDeImpresoras.appendChild(
+      Object.assign(document.createElement("option"), {
         value: impresora,
         text: impresora,
-    }));
+      })
+    );
   }
   const nombreImpresora = $listaDeImpresoras.value;
   if (!nombreImpresora) {
-      return alert("Por favor seleccione una impresora. Si no hay ninguna, asegúrese de haberla compartido como se indica en: https://parzibyte.me/blog/2017/12/11/instalar-impresora-termica-generica/")
+    return alert("Por favor seleccione una impresora.");
   }
-  imprimirHolaMundo(nombreImpresora);
-}
+};
 
-const imprimirHolaMundo = async (nombreImpresora) => {
+const imprimirHolaMundo = async (nombreImpresora, data) => {
   const conector = new ConectorPluginV3(URLPlugin);
   conector.Iniciar();
-  conector.EscribirTexto("Hola mundo\nParzibyte.me");
+  conector.EscribirTexto("CHASQUI EXPRESS TIPUTINI");
+  conector.EscribirTexto("Guia de encomienda");
+  //usar la data que llega para imprimir
+  conector.EscribirTexto(`Fecha: ${data.fecha}`);
+  conector.EscribirTexto(`Enviado por: ${data.envia}`);
+  conector.EscribirTexto(`Destino: ${data.destino}`);
+  conector.EscribirTexto(`Recibe: ${data.recibe}`);
   conector.Feed(1);
-  const respuesta = await conector
-      .imprimirEn(nombreImpresora);
+  const respuesta = await conector.imprimirEn(nombreImpresora);
   if (respuesta === true) {
-      alert("Impreso correctamente");
+    alert("Impreso correctamente");
   } else {
-      alert("Error: " + respuesta);
+    alert("Error: " + respuesta);
   }
-}
+};
 
 function eliminar(id) {
   Swal.fire({
