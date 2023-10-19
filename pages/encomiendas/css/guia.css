@@ -1,0 +1,58 @@
+body {
+    font-family: 'DejaVu Sans Mono', monospace;
+}
+
+/* O bien, aplica la fuente a elementos específicos */
+h1, p, .clase-personalizada {
+    font-family: 'DejaVu Sans Mono', monospace;
+}
+
+.logo {
+    width: 100px; /* Ancho del logotipo */
+    margin: 0 auto;
+    display: block;
+}
+
+        .ticket {
+            width: 80mm; /* Ancho del ticket */
+            padding: 5px;
+            border: 1px solid #000;
+            text-align: center;
+            font-size: 15px;
+        }
+
+        .dato {
+            text-align: left;
+            margin: 5px 0;
+        }
+
+        .dato2{
+            text-align: center;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        .dato3{
+            text-align: center;
+            margin: 5px 0;
+            font-size: 15px;
+        }
+
+        .firma {
+            margin-top: 15px;
+            border-top: 1px solid #000;
+            padding-top: 10px;
+        }
+
+        .firma label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .linea-firma {
+            width: 100%;
+            height: 1px;
+            background-color: #000;
+            margin: 5px 0;
+        }
+  

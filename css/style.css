@@ -1,0 +1,25 @@
+/* crear un avatar circular de user  */
+
+.user{
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: #dedede;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.user img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+body{
+    background: #060257;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
