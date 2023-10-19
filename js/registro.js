@@ -6,6 +6,12 @@ const database = supabase.createClient(supabaseUrl, supabaseKey);
 const itemsPerPage = 5;
 let currentPage = 1;
 
+const obtenerListaDeImpresoras = async () => {
+  return await ConectorPluginV3.obtenerImpresoras();
+};
+const URLPlugin = "http://localhost:8000"
+const $listaDeImpresoras = document.getElementById("impresora");
+
 function displayData(data, page) {
   const tableBody = document.getElementById("table-body");
   tableBody.innerHTML = "";
@@ -41,10 +47,33 @@ function displayData(data, page) {
   }
 }
 
-function guia(id) {
-  ///abrir en otra ventana la guia con información
-  //de la encomienda
-  window.open(`../encomiendas/guia.html?id=${id}`);
+const guia = async (id) => {
+  const impresoras = await ConectorPluginV3.obtenerImpresoras(URLPlugin);
+  for (const impresora of impresoras) {
+    $listaDeImpresoras.appendChild(Object.assign(document.createElement("option"), {
+        value: impresora,
+        text: impresora,
+    }));
+  }
+  const nombreImpresora = $listaDeImpresoras.value;
+  if (!nombreImpresora) {
+      return alert("Por favor seleccione una impresora. Si no hay ninguna, asegúrese de haberla compartido como se indica en: https://parzibyte.me/blog/2017/12/11/instalar-impresora-termica-generica/")
+  }
+  imprimirHolaMundo(nombreImpresora);
+}
+
+const imprimirHolaMundo = async (nombreImpresora) => {
+  const conector = new ConectorPluginV3(URLPlugin);
+  conector.Iniciar();
+  conector.EscribirTexto("Hola mundo\nParzibyte.me");
+  conector.Feed(1);
+  const respuesta = await conector
+      .imprimirEn(nombreImpresora);
+  if (respuesta === true) {
+      alert("Impreso correctamente");
+  } else {
+      alert("Error: " + respuesta);
+  }
 }
 
 function eliminar(id) {
@@ -81,35 +110,35 @@ function Whatsapp(id) {
     .eq("id", id)
     .then((result) => {
       console.log(result.data[0].recibe);
-      let numero = '593993142521';
+      let numero = "593993142521";
       let mensaje = `
       ¡Hola ${result.data[0].recibe}! Nos complace informarte que tu encomienda ya se encuentra disponible para ser retirada. El total a pagar es de $${result.data[0].valor}. Por favor, acércate a nuestra ubicación para recoger tu encomienda. ¡Gracias por confiar en nosotros!
-      `
-      window.open(`https://api.whatsapp.com/send?phone=${numero}&text=${mensaje}`);
+      `;
+      window.open(
+        `https://api.whatsapp.com/send?phone=${numero}&text=${mensaje}`
+      );
     });
   // //enviar un mensaje de whatsapp
 }
 
-const inputBusqueda = document.getElementById('inputBusqueda');
-        const tabla = document.getElementById('table-body');
+const inputBusqueda = document.getElementById("inputBusqueda");
+const tabla = document.getElementById("table-body");
 
-         // Agrega un evento de escucha al campo de búsqueda
-         inputBusqueda.addEventListener('input', function() {
-            const textoBusqueda = inputBusqueda.value.toLowerCase();
-            const filas = tabla.getElementsByTagName('tr');
-            // Itera a través de todas las filas de la tabla y oculta/muestra según la búsqueda
-            for (let i = 0; i < filas.length; i++) {
-                const fila = filas[i];
-                const contenidoFila = fila.innerText.toLowerCase();
-                if (contenidoFila.includes(textoBusqueda)) {
-                    fila.style.display = '';
-                } else {
-                    fila.style.display = 'none';
-                }
-            }
-        });
-
-function generarGuia() {}
+// Agrega un evento de escucha al campo de búsqueda
+inputBusqueda.addEventListener("input", function () {
+  const textoBusqueda = inputBusqueda.value.toLowerCase();
+  const filas = tabla.getElementsByTagName("tr");
+  // Itera a través de todas las filas de la tabla y oculta/muestra según la búsqueda
+  for (let i = 0; i < filas.length; i++) {
+    const fila = filas[i];
+    const contenidoFila = fila.innerText.toLowerCase();
+    if (contenidoFila.includes(textoBusqueda)) {
+      fila.style.display = "";
+    } else {
+      fila.style.display = "none";
+    }
+  }
+});
 
 function createPagination(data, itemsPerPage) {
   const totalPages = Math.ceil(data.length / itemsPerPage);
